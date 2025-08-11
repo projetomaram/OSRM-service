@@ -29,8 +29,8 @@ module.exports = {
     layer: osm
   },
   services: [{
-    label: 'Car (fastest)',
-    path: 'https://router.project-osrm.org/route/v1'
+    label: process.env.OSRM_LABEL || 'Car (fastest)',
+    path: '/route/v1'
   }],
   layer: [{
     'openstreetmap.org': osm,
