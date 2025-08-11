@@ -1,0 +1,21 @@
+FROM alpine:3.22
+
+ENV OSRM_BACKEND='http://localhost:5000'
+ENV OSRM_CENTER='-23.551724, -51.460568'
+ENV OSRM_ZOOM='16'
+ENV OSRM_LANGUAGE='pt-BR'
+ENV OSRM_LABEL='Car (fastest)'
+
+RUN mkdir -p /src
+COPY /front-mod/package.json /src
+
+RUN apk add --no-cache sed npm && \
+    cd /src && \
+    npm install
+
+COPY /front-mod /src
+WORKDIR /src
+
+EXPOSE 9966
+
+CMD ["npm", "start"]

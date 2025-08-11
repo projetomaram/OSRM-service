@@ -1,0 +1,4 @@
+Remover nominatim: 
+	comentar/remover linha 97 do index.js: //geocoder: L.Control.Geocoder.nominatim(),
+
+Remover mapbox e selecionar por padrão o osm: /src/leaflet_options.js

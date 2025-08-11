@@ -1,0 +1,24 @@
+FROM ghcr.io/project-osrm/osrm-backend AS builder 
+
+WORKDIR /data
+
+RUN apk update && apk add --no-cache wget curl
+
+ARG PBF_URL=https://download.geofabrik.de/south-america/brazil/sul-latest.osm.pbf
+
+RUN wget ${PBF_URL} -O map.osm.pbf
+
+RUN osrm-extract -p /opt/car.lua /data/map.osm.pbf && \
+    osrm-partition /data/map.osrm && \
+    osrm-customize /data/map.osrm && \
+    rm -rf map.osm.pbf
+
+FROM ghcr.io/project-osrm/osrm-backend
+
+WORKDIR /data
+
+COPY --from=builder /data/*.osrm* .
+
+EXPOSE 5000
+
+CMD ["osrm-routed", "--algorithm", "mld", "/data/map.osrm"]
