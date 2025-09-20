@@ -106,6 +106,8 @@ var plan = new ReversablePlan([], {
       plan.spliceWaypoints(i, 1);
       
       // -----------------------------CÓDIGO DE CONTROLE -----------------
+      // Verifica se foi selecionado dois pontos, se não foi remove o carrinho
+      // Evita o erro de mais de um carrinho no mapa
       var qtdWaypoints = lrmControl.getWaypoints().filter(function(pnt) {return pnt.latLng;}).length;
       if (qtdWaypoints < 2 && carrinho) {
         map.removeLayer(carrinho);
@@ -158,6 +160,7 @@ var controlOptions = {
   collapsible: options.lrm.collapsible,
   itineraryBuilder: new ItineraryBuilder(),
 };
+
 // translate profile names
 for (var profile = 0, len = controlOptions.services.length; profile < len; profile++)
 {
@@ -228,10 +231,13 @@ lrmControl.on('alternateChosen', function(e) {
 // Route export
 lrmControl.on('routeselected', function(e) {
   // -----------------------------CÓDIGO DE CONTROLE -----------------
+  // Verifica se há um carrinho em caso de haver dois ou mais caminhos
+  //  para o mesmo destino, e quando selecionar outra rota apaga o 
+  //  carrinho que já está e gera outro para a rota selecionada
   if (carrinho) {
     map.removeLayer(carrinho);
   }
-
+  // Se não adiciona o carrinho novamente
   var coords = e.route.coordinates;
   carrinho = L.animatedMarker(coords, {
         icon: carIcon,
@@ -289,27 +295,32 @@ L.control.locate({
 }).addTo(map);
 
 
+//----------------------- CÓDIGO CARRINHO ------------------
+// Inicializa o icone do carrinho
 var carIcon = L.icon({
   iconUrl: 'images/car.png',
   iconSize: [25, 25]
 });
-
+// Inicializa a variável
 var carrinho = null;
 
-
+// Verifica se foi disparado o alerta 'routesfound' e então é executado os comandos
 lrmControl.on('routesfound', function(e) {
   // Se já existe um carrinho, remove ele
   if (carrinho) {
     map.removeLayer(carrinho);
   }
-
+  // Armazena todas as coordenadas retornadas pela requisição
   var coords = e.routes[0].coordinates;
+  // Faz o carrinho percorrer todas essas cordenadas de 100 em 100 metros 
+  //  e de 500 ms de intervalo
   carrinho = L.animatedMarker(coords, {
         icon: carIcon,
         distance: 100,   
         interval: 500,   
         autoStart: true
     });
+    // Adiciona o carrinho no mapa
     map.addLayer(carrinho);
 });
-
+//-----------------------------------------------------------
