@@ -13,7 +13,7 @@ Para que seja possível a execução individual dos serviços do resto da aplica
     path: '/route/v1'
   }],
 ```
-Alterando o path para o endereço do backend, por exemplo `http://localhost:5000`, e realizando o build novamente da imagem Docker.
+Alterando o path para o endereço do backend, por exemplo `http://localhost:5000/route/v1`, caso esteja sendo executado na mesma máquina do backend, e realizando o build novamente da imagem Docker.
 
 ## Exemplo de uso individual
 Em caso de necessidade de executar os serviços separados utilizando `docker run` é  necessário primeiro executar o backend para isso basta executar o comando:
